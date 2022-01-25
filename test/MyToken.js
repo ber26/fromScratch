@@ -31,6 +31,14 @@ describe('Token contract', () => {
             const addr2Balance = await token.balanceOf(addr2.address);
             expect(addr2Balance).to.equal(50);
         });
+        it('Should not transfer tokens to same address', async () => {
+            const initialOwnerBalance = await token.balanceOf(owner.address);
+
+            await expect (token.connect(owner).transfer(owner.address, 1)).to.be.revertedWith('You cannot transfer to same wallet!');
+
+            expect(await token.balanceOf(owner.address)).to.equal(initialOwnerBalance);
+        });
+
         it('Should fail if sender doesnt have enough tokens', async () => {
             const initialOwnerBalance = await token.balanceOf(owner.address);
 
