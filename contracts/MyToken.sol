@@ -22,6 +22,7 @@ contract MyToken is IERC20 {
     uint256 private totalSupply_;
 
     constructor(uint256 _totalSupply) {
+        owner = msg.sender;
         totalSupply_ = _totalSupply;
         balances[owner] = _totalSupply;
     }
@@ -33,6 +34,13 @@ contract MyToken is IERC20 {
         return balances[_owner];
     }
 
-    
+    function transfer(address _to, uint256 _value) public returns (bool success){
+        require(balances[msg.sender] >= _value, 'Insufficient Balance!');
+        require(msg.sender != _to, 'You cannot transfer to same wallet!');
+
+        balances[msg.sender] -= _value;
+        balances[_to] += _value;
+    }
+
 
 }
