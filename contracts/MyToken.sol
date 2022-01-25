@@ -1,9 +1,8 @@
 pragma solidity ^0.8.0;
 
+interface IERC20 {
 
-interface IERC20{
-
-    function totalSupply() external view returns(uint)
+    function totalSupply() external view returns (uint)
     function balanceOf(address _owner) public view returns (uint256 balance)
     function transfer(address _to, uint256 _value) public returns (bool success)
     function transferFrom(address _from, address _to, uint256 _value) public returns (bool success)
@@ -16,6 +15,14 @@ interface IERC20{
 }
 
 contract Token is IERC20 {
-    address public owner;
+    address private owner;
+    
     mapping (address => uint) private balances;
+    
+    uint256 private totalSupply_;
+
+    constructor(uint256 _totalSupply) {
+        totalSupply_ = _totalSupply;
+        balances[owner] = _totalSupply;
+    }
 }
