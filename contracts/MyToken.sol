@@ -43,7 +43,8 @@ contract MyToken is IERC20 {
     }
 
     function transferFrom(address _from, address _to, uint256 _value) public virtual override returns (bool success){
-        //check for allowance && _value >= balance
+        require(allowance(_from,_to) >= _value, 'Allowance amount is too low!');
+        require(balances[_from] >= _value, 'Insufficient Balance!');
 
         balances[_from] -= _value;
         balances[_to] += _value;
