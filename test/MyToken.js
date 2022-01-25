@@ -1,11 +1,11 @@
-const { expect } = require('chai');
-const { ethers } = require('ethers');
+const { expect } = require("chai");
+
 
 describe('Token contract', () => {
     let Token, token, owner, addr1, addr2;
 
     beforeEach (async () => {
-        Token = await ethers.getContractFactory('Token');
+        Token = await ethers.getContractFactory('MyToken');
         token = await Token.deploy();
         [owner, addr1, addr2, _] = await ethers.getSigners();
     });
