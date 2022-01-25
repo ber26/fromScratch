@@ -6,7 +6,7 @@ describe('Token contract', () => {
 
     beforeEach (async () => {
         Token = await ethers.getContractFactory('MyToken');
-        token = await Token.deploy();
+        token = await Token.deploy(10000000);
         [owner, addr1, addr2, _] = await ethers.getSigners();
     });
 

@@ -2,8 +2,8 @@
   "_format": "hh-sol-cache-2",
   "files": {
     "C:\\Users\\vik\\Desktop\\playground\\fromScratch\\contracts\\MyToken.sol": {
-      "lastModificationDate": 1643085095441,
-      "contentHash": "b894d4ae684c22234b457611889a8b4d",
+      "lastModificationDate": 1643085515265,
+      "contentHash": "a00ae2fd210147fbf1e77a67e4247930",
       "sourceName": "contracts/MyToken.sol",
       "solcConfig": {
         "version": "0.8.0",
