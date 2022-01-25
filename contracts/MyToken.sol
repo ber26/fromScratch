@@ -29,7 +29,7 @@ contract MyToken is IERC20 {
     function totalSupply() public view virtual override returns (uint){
         return totalSupply_;
     }
-    function balanceOf(address _owner) public view virtual override returns (uint256 balance){
+    function balanceOf(address _owner) public view virtual override returns (uint256){
         return balances[_owner];
     }
 
