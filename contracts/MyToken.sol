@@ -17,6 +17,7 @@ contract MyToken is IERC20 {
     address public owner;
     
     mapping (address => uint) private balances;
+    mapping(address => mapping(address => uint256)) private allowances;
 
     uint256 public totalSupply_;
 
@@ -46,6 +47,14 @@ contract MyToken is IERC20 {
 
         balances[_from] -= _value;
         balances[_to] += _value;
+    };
+
+    function approve(address _spender, uint256 _value) public returns (bool success){
+        allowances[msg.sender][_spender] = _value;
+    };
+
+    function allowance(address _owner, address _spender) public view returns (uint256 remaining){
+        return allowances[_owner][_spender];
     };
 
 }
