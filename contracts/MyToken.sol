@@ -29,5 +29,10 @@ contract MyToken is IERC20 {
     function totalSupply() external view returns (uint){
         return totalSupply_;
     }
+    function balanceOf(address _owner) public view returns (uint256 balance){
+        return balances[_owner];
+    }
+
+    
 
 }
