@@ -17,7 +17,7 @@ contract MyToken is IERC20 {
     address public owner;
     
     mapping (address => uint) private balances;
-    
+
     uint256 public totalSupply_;
 
     constructor(uint256 _totalSupply) {
@@ -41,5 +41,11 @@ contract MyToken is IERC20 {
         balances[_to] += _value;
     }
 
+    function transferFrom(address _from, address _to, uint256 _value) public virtual override returns (bool success){
+        //check for allowance && _value >= balance
+
+        balances[_from] -= _value;
+        balances[_to] += _value;
+    };
 
 }
