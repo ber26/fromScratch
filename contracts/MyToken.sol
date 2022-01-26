@@ -17,7 +17,7 @@ interface IERC20 {
 contract MyToken is IERC20 {
     address public owner;
     
-    mapping(address => uint) private balances;
+    mapping(address => uint256) private balances;
     mapping(address => mapping(address => uint256)) private allowances;
 
     uint256 public totalSupply_;
@@ -35,7 +35,7 @@ contract MyToken is IERC20 {
         return balances[_owner];
     }
 
-    function transfer(address _to, uint256 _value) public virtual override returns (bool success){
+    function transfer(address _to, uint256 _value) public virtual override returns (bool success){      
         require(balances[msg.sender] >= _value, 'Insufficient Balance!');
         require(msg.sender != _to, 'You cannot transfer to same wallet!');
 

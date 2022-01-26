@@ -71,5 +71,31 @@ describe('Token contract', () => {
         it('Should not transfer tokens to same address', async () => {
             await expect (token.connect(addr1).approve(addr1.address, 10)).to.be.revertedWith('Cannot Approve Same Addresses!');
         });
+
     });
+
+    describe('TransferFrom', () => {
+        it ('Should transfer from addr1 to addr2 with approval', async () => {
+            await token.transfer(addr1.address, 100);
+
+            await token.connect(addr1).approve(addr2.address, 100);
+                
+            await token.connect(addr2).transferFrom(addr1.address, addr2.address, 50);
+
+            expect(await token.balanceOf(addr1.address)).to.equal(50);
+            expect(await token.balanceOf(addr2.address)).to.equal(50);
+
+        });    
+        
+        it('Should not transfer more tokens than approved', async () => {
+            await token.transfer(addr1.address, 200);
+            
+            await token.connect(addr1).approve(addr2.address, 0);
+
+            await expect (token.connect(addr2).transferFrom(addr1.address, addr2.address, 150)).to.be.revertedWith('Allowance amount is too low!');
+
+        });
+    
+    });
+
 });
