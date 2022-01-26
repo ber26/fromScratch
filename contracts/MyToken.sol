@@ -53,7 +53,7 @@ contract MyToken is IERC20 {
         balances[_from] -= _value;
         balances[_to] += _value;
 
-        allowances[_owner][_spender] -= _value;
+        allowances[_from][_to] -= _value;
 
         emit Transfer(_from, _to, _value);
         return true;

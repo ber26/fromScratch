@@ -95,7 +95,19 @@ describe('Token contract', () => {
             await expect (token.connect(addr2).transferFrom(addr1.address, addr2.address, 150)).to.be.revertedWith('Allowance amount is too low!');
 
         });
-    
+        it('Should decrease allowance on each transaction', async () => {
+            await token.transfer(addr1.address, 100);
+            await token.connect(addr1).approve(addr2.address, 50);
+
+            const initialAllowance = await token.allowance(addr1.address, addr2.address);
+
+            await token.connect(addr2).transferFrom(addr1.address, addr2.address, 40);
+
+            const finalAllowance = await token.allowance(addr1.address, addr2.address);
+
+            expect (finalAllowance).to.equal(initialAllowance - 40);
+
+        });
     });
 
 });
