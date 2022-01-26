@@ -68,5 +68,8 @@ describe('Token contract', () => {
 
             expect(await token.allowance(addr1.address, addr2.address)).to.equal(10);
         });
+        it('Should not transfer tokens to same address', async () => {
+            await expect (token.connect(addr1).approve(addr1.address, 10)).to.be.revertedWith('Cannot Approve Same Addresses!');
+        });
     });
 });

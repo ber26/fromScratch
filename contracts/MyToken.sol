@@ -58,6 +58,8 @@ contract MyToken is IERC20 {
     }
 
     function approve(address _spender, uint256 _value) public virtual override returns (bool success){
+        require(msg.sender != _spender, "Cannot Approve Same Addresses!");
+        
         allowances[msg.sender][_spender] = _value;
 
         emit Approval(msg.sender, _spender, _value);
