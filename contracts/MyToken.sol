@@ -20,11 +20,17 @@ contract MyToken is IERC20 {
     mapping(address => uint256) private balances;
     mapping(address => mapping(address => uint256)) private allowances;
 
+    string private name_;
+    string private symbol_;
+    
     uint256 public totalSupply_;
 
-    constructor(uint256 _totalSupply) {
+    constructor(string memory _name, string memory _symbol, uint256 _totalSupply) {
         owner = msg.sender;
+        name_ = _name;
+        symbol_ = _symbol;
         totalSupply_ = _totalSupply;
+        
         balances[owner] = totalSupply_;
     }
 
