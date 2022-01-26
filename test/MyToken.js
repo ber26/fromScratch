@@ -61,6 +61,12 @@ describe('Token contract', () => {
             const addr2Balance = await token.balanceOf(addr2.address);
             expect(addr2Balance).to.equal(50);
         });
+    });
+    describe('Approval', () => {    
+        it ('Should add a new approve pair and set allowance', async () => {
+            await token.connect(addr1).approve(addr2.address, 10);
 
+            expect(await token.allowance(addr1.address, addr2.address)).to.equal(10);
+        });
     });
 });
