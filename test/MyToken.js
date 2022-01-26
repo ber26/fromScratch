@@ -74,7 +74,7 @@ describe('Token contract', () => {
 
     });
 
-    describe('TransferFrom', () => {
+    describe('TransferFrom, Approval and Allowance', () => {
         it ('Should transfer from addr1 to addr2 with approval', async () => {
             await token.transfer(addr1.address, 100);
 
