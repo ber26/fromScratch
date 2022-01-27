@@ -19,7 +19,7 @@ contract MyToken is IERC20 {
 
     struct TimeLock {
         uint256 balance;
-        uint256 lockedUntil;
+        uint256 until;
     }
 
     mapping(address => uint256) private balances;
@@ -97,18 +97,28 @@ contract MyToken is IERC20 {
         require(timelocks[_receiver].balance == 0, "Lock already exists!");
 
         timelocks[_receiver].balance = _value;
-        timelocks[_receiver].lockedUntil = block.timestamp + _lockperiod;
+        timelocks[_receiver].until = block.timestamp + _lockperiod;
 
         lockedSupply_ += _value;
 
         return true;
     }
 
-    function lockedSupplyOf(address _receiver) public view returns (uint256) {
+    function claimable(address _receiver) public view returns (uint256) {
         return timelocks[_receiver].balance;
     }
 
-    function lockedSupplyUntil(address _receiver) public view returns (uint256){
-        return timelocks[_receiver].lockedUntil;
+    function lockedUntil(address _receiver) public view returns (uint256){
+        return timelocks[_receiver].until;
+    }
+
+    function claim() public returns (bool success) {
+        require (timelocks[msg.sender].until <= block.timestamp, 'Lock period is not over yet!');
+
+        _transfer(owner, msg.sender, timelocks[msg.sender].balance);
+        timelocks[msg.sender].balance = 0;
+        lockedSupply_ -= timelocks[msg.sender].balance;
+
+        return true;
     }
 }
