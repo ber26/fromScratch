@@ -16,10 +16,15 @@ interface IERC20 {
 
 contract MyToken is IERC20 {
     address public owner;
-    
+
+    struct TimeLock {
+        uint256 balance;
+        uint256 lockedUntil;
+    }
+
     mapping(address => uint256) private balances;
     mapping(address => mapping(address => uint256)) private allowances;
-    mapping(address => mapping(uint256 => uint64)) private timelocks;
+    mapping(address => TimeLock) private timelocks;
 
     string private name_;
     string private symbol_;
@@ -83,7 +88,23 @@ contract MyToken is IERC20 {
         balances[_to] += _value;
     }
 
-    function lockedSupply() public view returns (uint256) {
+    function LockedSupply() public view returns (uint256) {
         return lockedSupply_;
+    }
+
+    function reserveLockFor(address _receiver, uint256 _value, uint256 _lockperiod) public returns (bool) {
+        require(msg.sender == owner, "Only owner can set locks!");
+        require(timelocks[_receiver].balance == 0, "Lock already exists!");
+
+        timelocks[_receiver].balance = _value;
+        timelocks[_receiver].lockedUntil = block.timestamp + _lockperiod;
+
+        lockedSupply_ += _value;
+
+        return true;
+    }
+
+    function lockedSupplyOf(address _receiver) public view returns (uint256) {
+        return timelocks[_receiver].balance;
     }
 }

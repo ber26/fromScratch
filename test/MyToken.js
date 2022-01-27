@@ -110,4 +110,16 @@ describe('Token contract', () => {
         });
     });
 
+
+    describe('TimeLock', () => {
+        it('Should display timelock', async () => {
+
+            await token.reserveLockFor(addr1.address, 100, 86400);
+
+            const finalLocked = await token.lockedSupplyOf(addr1.address);
+
+            expect (finalLocked).to.equal(100);
+        });
+    });
+
 });
