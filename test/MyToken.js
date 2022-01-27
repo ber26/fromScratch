@@ -119,6 +119,8 @@ describe('Token contract', () => {
             const finalLocked = await token.lockedSupplyOf(addr1.address);
 
             expect (finalLocked).to.equal(100);
+
+            await expect (token.lockedSupply().to.equal(100));
         });
     });
 
