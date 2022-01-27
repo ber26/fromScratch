@@ -107,4 +107,8 @@ contract MyToken is IERC20 {
     function lockedSupplyOf(address _receiver) public view returns (uint256) {
         return timelocks[_receiver].balance;
     }
+
+    function lockedSupplyUntil(address _receiver) public view returns (uint256){
+        return timelocks[_receiver].lockedUntil;
+    }
 }
