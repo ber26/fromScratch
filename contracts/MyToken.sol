@@ -82,4 +82,8 @@ contract MyToken is IERC20 {
         balances[_from] -= _value;
         balances[_to] += _value;
     }
+
+    function lockedSupply() public view returns (uint256) {
+        return lockedSupply_;
+    }
 }
