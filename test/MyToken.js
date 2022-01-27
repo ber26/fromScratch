@@ -112,7 +112,7 @@ describe('Token contract', () => {
 
 
     describe('TimeLock', () => {
-        it('Should display timelock', async () => {
+        it('Should add and display (total) locked tokens', async () => {
 
             await token.reserveLockFor(addr1.address, 100, 86400);
 
@@ -120,7 +120,9 @@ describe('Token contract', () => {
 
             expect (finalLocked).to.equal(100);
 
-            await expect (token.lockedSupply().to.equal(100));
+            const totalLocked = await token.lockedSupply();
+
+            expect (totalLocked).to.equal(100);
         });
     });
 
