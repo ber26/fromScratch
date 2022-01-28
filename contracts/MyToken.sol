@@ -99,7 +99,7 @@ contract MyToken is IERC20 {
         return lockedSupply_;
     }
 
-    function reserveLockFor(address _receiver, uint256 _value, uint256 _lockperiod) public returns (bool) {
+    function reserve(address _receiver, uint256 _value, uint256 _lockperiod) public returns (bool) {
         require(msg.sender == owner, "Only owner can set locks!");
         require(timelocks[_receiver].balance == 0, "Lock already exists!");
 

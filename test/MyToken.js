@@ -114,7 +114,7 @@ describe('Token contract', () => {
     describe('TimeLock', () => {
         it('Should add and display (total) locked tokens', async () => {
 
-            await token.reserveLockFor(addr1.address, 100, 86400);
+            await token.reserve(addr1.address, 100, 86400);
 
             const finalLocked = await token.claimable(addr1.address);
 
@@ -127,7 +127,7 @@ describe('Token contract', () => {
     });
     describe('Claim', () => {
         it('Should claim balance from owner to addr1', async () => {
-            await token.reserveLockFor(addr1.address, 150, 0);
+            await token.reserve(addr1.address, 150, 0);
 
             const InitialBalance = await token.balanceOf(addr1.address);
 
@@ -138,7 +138,7 @@ describe('Token contract', () => {
             expect (FinalBalance).to.equal(InitialBalance + 150);
         });
         it('Should not claim balance from owner to addr1', async () => {
-            await token.reserveLockFor(addr1.address, 150, 2000);
+            await token.reserve(addr1.address, 150, 2000);
 
             await expect (token.connect(addr1).claim()).to.be.revertedWith('Lock period is not over yet!');
         });
