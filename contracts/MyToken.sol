@@ -3,6 +3,7 @@ pragma solidity ^0.8.0;
 
 interface IERC20 {
 
+    function decimals() external view returns (uint8);
     function totalSupply() external view returns (uint);
     function balanceOf(address _owner) external view returns (uint256 balance);
     function transfer(address _to, uint256 _value) external returns (bool success);
@@ -32,15 +33,21 @@ contract MyToken is IERC20 {
     uint256 public totalSupply_;
     uint256 public lockedSupply_;
 
-    constructor(string memory _name, string memory _symbol, uint256 _totalSupply) {
+    uint8 public decimals_;
+
+    constructor(string memory _name, string memory _symbol, uint8 _decimals, uint256 _totalSupply) {
         owner = msg.sender;
         name_ = _name;
         symbol_ = _symbol;
+        decimals_ = _decimals;
         totalSupply_ = _totalSupply;
         
         balances[owner] = totalSupply_;
     }
 
+    function decimals() public view virtual override returns (uint8){
+        return decimals_;
+    }
     function totalSupply() public view virtual override returns (uint){
         return totalSupply_;
     }
