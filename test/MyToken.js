@@ -6,7 +6,7 @@ describe('Token contract', () => {
 
     beforeEach (async () => {
         Token = await ethers.getContractFactory('MyToken');
-        token = await Token.deploy('MyToken', 'MYT', 10000000);
+        token = await Token.deploy('MyToken', 'MYT', 8, 1000);
         [owner, addr1, addr2, _] = await ethers.getSigners();
     });
 
@@ -144,5 +144,36 @@ describe('Token contract', () => {
         });
 
     });
+
+    describe('Claim V2', () => {
+        it('ADDR1 reserves for owner and owner successfully claims', async () => {
+            const ownerBalancePreReserve = await token.balanceOf(owner.address);
+            
+            await token.transfer(addr1.address, 500);
+
+            const addr1BalancePreReserve = await token.balanceOf(addr1.address);
+            
+            await token.connect(addr1).reserve(owner.address, 400, 0);
+
+            const addr1BalancePostReserve = await token.balanceOf(addr1.address);
+            const ownerBalancePostReserve = await token.balanceOf(owner.address);
+            
+            await token.claim();
+ 
+            expect (addr1BalancePostReserve).to.equal(addr1BalancePreReserve - 400);
+            expect (ownerBalancePostReserve).to.equal(ownerBalancePreReserve - addr1BalancePostReserve);
+        });
+
+        it('Owner is rejected from sending locked tokens', async () => {
+            await token.transfer(addr1.address, 500);
+
+            await token.connect(addr1).reserve(addr2.address, 500, 86400);
+
+            const ownerTotalBalance = await token.balanceOf(owner.address);
+
+            await expect (token.transfer(addr1.address, ownerTotalBalance)).to.be.revertedWith('Balance unavailable!');
+        });
+    });
+
 
 });

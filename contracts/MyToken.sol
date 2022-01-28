@@ -16,7 +16,7 @@ interface IERC20 {
 }
 
 contract MyToken is IERC20 {
-    address public owner;
+    address payable public owner;
 
     struct TimeLock {
         uint256 balance;
@@ -30,13 +30,13 @@ contract MyToken is IERC20 {
     string private name_;
     string private symbol_;
     
-    uint256 public totalSupply_;
-    uint256 public lockedSupply_;
+    uint256 private totalSupply_;
+    uint256 private lockedSupply_;
 
     uint8 public decimals_;
 
     constructor(string memory _name, string memory _symbol, uint8 _decimals, uint256 _totalSupply) {
-        owner = msg.sender;
+        owner = payable(msg.sender);
         name_ = _name;
         symbol_ = _symbol;
         decimals_ = _decimals;
@@ -91,41 +91,56 @@ contract MyToken is IERC20 {
     }
 
     function _transfer(address _from, address _to, uint256 _value) private {
+        if (msg.sender == owner && _from == owner) {
+            require(_value <= ( balances[owner] - lockedSupply_), 'Balance unavailable!');
+        }
         balances[_from] -= _value;
         balances[_to] += _value;
     }
 
-    function lockedSupply() public view returns (uint256) {
-        return lockedSupply_;
+    function reserve(address _receiver, uint256 _value, uint256 _lockperiod) public returns (bool) {
+        require(balances[msg.sender] >= _value, 'Insufficient Balance!');
+        require(timelocks[_receiver].balance == 0, "Already reserved");
+
+        if (msg.sender == owner) {
+            _reserve(_receiver, _value, _lockperiod);
+        }else{
+            _transfer(msg.sender, owner, _value);
+            _reserve(_receiver, _value, _lockperiod);
+        }
+        return true;
     }
 
-    function reserve(address _receiver, uint256 _value, uint256 _lockperiod) public returns (bool) {
-        require(msg.sender == owner, "Only owner can set locks!");
-        require(timelocks[_receiver].balance == 0, "Lock already exists!");
-
+    function _reserve(address _receiver, uint256 _value, uint256 _lockperiod) private {
         timelocks[_receiver].balance = _value;
         timelocks[_receiver].until = block.timestamp + _lockperiod;
 
         lockedSupply_ += _value;
-
-        return true;
     }
 
     function claimable(address _receiver) public view returns (uint256) {
         return timelocks[_receiver].balance;
     }
-
+    function lockedSupply() public view returns (uint256) {
+        return lockedSupply_;
+    }
     function lockedUntil(address _receiver) public view returns (uint256){
         return timelocks[_receiver].until;
     }
 
     function claim() public returns (bool success) {
         require (timelocks[msg.sender].until <= block.timestamp, 'Lock period is not over yet!');
-
-        _transfer(owner, msg.sender, timelocks[msg.sender].balance);
-        timelocks[msg.sender].balance = 0;
-        lockedSupply_ -= timelocks[msg.sender].balance;
-
+        if (msg.sender == owner) {
+            _claim();
+        }else{
+            _transfer(owner, msg.sender, timelocks[msg.sender].balance);
+            _claim();
+        }
         return true;
+    }
+
+    function _claim() private {
+            timelocks[msg.sender].balance = 0;
+            lockedSupply_ -= timelocks[msg.sender].balance;
     }
 }
