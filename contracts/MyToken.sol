@@ -86,7 +86,7 @@ contract MyToken is IERC20 {
         return true;
     }
 
-    function allowance(address _owner, address _spender) public view virtual override returns (uint256 remaining){
+    function allowance(address _owner, address _spender) public view override returns (uint256 remaining){
         return allowances[_owner][_spender];
     }
 
