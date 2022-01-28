@@ -51,10 +51,10 @@ contract MyToken is IERC20 {
     function totalSupply() public view virtual override returns (uint){
         return totalSupply_;
     }
-    function balanceOf(address _owner) public view virtual override returns (uint256){
+    function balanceOf(address _owner) public view override returns (uint256){
         return balances[_owner];
     }
-
+    
     function transfer(address _to, uint256 _value) public virtual override returns (bool success){      
         require(balances[msg.sender] >= _value, 'Insufficient Balance!');
         require(msg.sender != _to, 'You cannot transfer to same wallet!');

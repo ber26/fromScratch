@@ -173,6 +173,20 @@ describe('Token contract', () => {
 
             await expect (token.transfer(addr1.address, ownerTotalBalance)).to.be.revertedWith('Balance unavailable!');
         });
+        it('Owner address is able to use available tokens while reservations are on', async () => {
+            await token.transfer(addr1.address, 400);
+
+            await token.connect(addr1).reserve(addr2.address, 400, 86400);
+
+            const ownerBalanceBefore = await token.balanceOf(owner.address);
+
+            await token.transfer(addr1.address, 600);
+
+            const ownerBalanceCurrent = await token.balanceOf(owner.address);
+
+            expect (ownerBalanceCurrent).to.equal(ownerBalanceBefore-600);
+        });
+
     });
 
 
