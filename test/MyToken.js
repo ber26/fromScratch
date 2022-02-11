@@ -68,14 +68,15 @@ describe('Token contract', () => {
 
             expect(await token.allowance(addr1.address, addr2.address)).to.equal(10);
         });
-        it('Should not transfer tokens to same address', async () => {
+
+        it('Should not add a new approve pair if same address is used', async () => {
             await expect (token.connect(addr1).approve(addr1.address, 10)).to.be.revertedWith('Cannot Approve Same Addresses!');
         });
 
     });
 
     describe('TransferFrom, Approval and Allowance', () => {
-        it ('Should transfer from addr1 to addr2 with approval', async () => {
+        it ('Should transfer by addr2 from addr1 to addr2 with approval', async () => {
             await token.transfer(addr1.address, 100);
 
             await token.connect(addr1).approve(addr2.address, 100);
@@ -112,7 +113,7 @@ describe('Token contract', () => {
 
 
     describe('TimeLock', () => {
-        it('Should add and display (total) locked tokens', async () => {
+        it('Should lock reserve tokens for addr1 and display (total) locked tokens', async () => {
 
             await token.reserve(addr1.address, 100, 86400);
 
@@ -126,8 +127,12 @@ describe('Token contract', () => {
         });
     });
     describe('Claim', () => {
-        it('Should claim balance from owner to addr1', async () => {
-            await token.reserve(addr1.address, 150, 0);
+        it('Should reserve and claim tokens from owner to addr1 after 24 hours', async () => {
+            
+            await token.reserve(addr1.address, 150, 86400);
+
+            //increasetime implementation
+            await network.provider.send("evm_increaseTime", [90000]);
 
             const InitialBalance = await token.balanceOf(addr1.address);
 
