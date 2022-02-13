@@ -158,10 +158,13 @@ describe('Token contract', () => {
 
             const addr1BalancePreReserve = await token.balanceOf(addr1.address);
             
-            await token.connect(addr1).reserve(owner.address, 400, 0);
+            await token.connect(addr1).reserve(owner.address, 400, 86400);
 
             const addr1BalancePostReserve = await token.balanceOf(addr1.address);
             const ownerBalancePostReserve = await token.balanceOf(owner.address);
+
+            //increasetime implementation
+            await network.provider.send("evm_increaseTime", [90000]);
             
             await token.claim();
  
