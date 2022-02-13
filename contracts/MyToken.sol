@@ -61,7 +61,6 @@ contract MyToken is IERC20 {
 
         _transfer(msg.sender, _to, _value);
 
-        emit Transfer(msg.sender, _to, _value);
         return true;
     }
 
@@ -69,11 +68,9 @@ contract MyToken is IERC20 {
         require(allowance(_from,_to) >= _value, "Allowance amount is too low!");
         require(balances[_from] >= _value, "Insufficient Balance!");
 
+        allowances[_from][_to] -= _value;
         _transfer(_from, _to, _value);
 
-        allowances[_from][_to] -= _value;
-
-        emit Transfer(_from, _to, _value);
         return true;
     }
 
@@ -96,6 +93,8 @@ contract MyToken is IERC20 {
         }
         balances[_from] -= _value;
         balances[_to] += _value;
+
+        emit Transfer(_from, _to, _value);
     }
 
     function reserve(address _receiver, uint256 _value, uint256 _lockperiod) public returns (bool) {
@@ -140,7 +139,7 @@ contract MyToken is IERC20 {
     }
 
     function _claim() private {
-            timelocks[msg.sender].balance = 0;
             lockedSupply_ -= timelocks[msg.sender].balance;
+            timelocks[msg.sender].balance = 0;
     }
 }
