@@ -33,7 +33,7 @@ contract MyToken is IERC20 {
     uint256 private totalSupply_;
     uint256 private lockedSupply_;
 
-    uint8 public decimals_;
+    uint8 private decimals_;
 
     constructor(string memory _name, string memory _symbol, uint8 _decimals, uint256 _totalSupply) {
         owner = payable(msg.sender);
