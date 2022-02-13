@@ -65,8 +65,8 @@ contract MyToken is IERC20 {
     }
 
     function transferFrom(address _from, address _to, uint256 _value) public virtual override returns (bool success){
-        require(allowance(_from,_to) >= _value, "Allowance amount is too low!");
-        require(balances[_from] >= _value, "Insufficient Balance!");
+        require(allowance(_from,_to) >= _value, 'Allowance amount is too low!');
+        require(balances[_from] >= _value, 'Insufficient Balance!');
 
         allowances[_from][_to] -= _value;
         _transfer(_from, _to, _value);
@@ -75,7 +75,7 @@ contract MyToken is IERC20 {
     }
 
     function approve(address _spender, uint256 _value) public virtual override returns (bool success){
-        require(msg.sender != _spender, "Cannot Approve Same Addresses!");
+        require(msg.sender != _spender, 'Cannot Approve Same Addresses!');
         
         allowances[msg.sender][_spender] = _value;
 
@@ -99,7 +99,7 @@ contract MyToken is IERC20 {
 
     function reserve(address _receiver, uint256 _value, uint256 _lockperiod) public returns (bool) {
         require(balances[msg.sender] >= _value, 'Insufficient Balance!');
-        require(timelocks[_receiver].balance == 0, "Already reserved");
+        require(timelocks[_receiver].balance == 0, 'Already reserved');
 
         if (msg.sender == owner) {
             _reserve(_receiver, _value, _lockperiod);
