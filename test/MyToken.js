@@ -138,6 +138,20 @@ describe("Token contract", () => {
     });
   });
   describe("Claim", () => {
+    it("Should not reserve if insufficient balance", async () => {
+      await token.transfer(addr1.address, 500);
+      await expect(token.connect(addr1).reserve(addr2.address, 600, 20000)).to.be.revertedWith(
+        "Insufficient Balance!");
+    });
+    
+    it("Should not claim Reserved Tokens while reservation period isn't ended", async () => {
+      await token.reserve(addr1.address, 150, 2000);
+
+      await expect(token.connect(addr1).claim()).to.be.revertedWith(
+        "Lock period is not over yet!"
+      );
+    });
+
     it("Should reserve and claim tokens from owner to Addr1 after 24 hours", async () => {
       await token.reserve(addr1.address, 150, 86400);
 
@@ -152,17 +166,8 @@ describe("Token contract", () => {
 
       expect(FinalBalance).to.equal(InitialBalance + 150);
     });
-    it("Should not claim balance reservation period hasn't ended", async () => {
-      await token.reserve(addr1.address, 150, 2000);
-
-      await expect(token.connect(addr1).claim()).to.be.revertedWith(
-        "Lock period is not over yet!"
-      );
-    });
-  });
-
-  describe("Claim v2", () => {
-    it("ADDR1 reserves for owner and owner successfully claims", async () => {
+    
+    it("Should allow ADDR1 reserve for owner and owner to successfully claim", async () => {
       const ownerBalancePreReserve = await token.balanceOf(owner.address);
 
       await token.transfer(addr1.address, 500);
@@ -185,7 +190,7 @@ describe("Token contract", () => {
       );
     });
 
-    it("Reserve tokens should be kept on the Contract Address Vault", async () => {
+    it("Should keep Reserved Tokens on the Contract Address Vault", async () => {
       const vaultPre = await token.balanceOf(token.address);
 
       await token.reserve(addr1.address, 500, 20000);
