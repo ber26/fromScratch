@@ -17,7 +17,7 @@ interface IERC20 {
 
 contract MyToken is IERC20 {
     address public owner;
-    address payable public contractAddress;
+    address payable public vault;
 
     struct TimeLock {
         uint256 balance;
@@ -37,7 +37,7 @@ contract MyToken is IERC20 {
     uint8 private decimals_;
 
     constructor(string memory _name, string memory _symbol, uint8 _decimals, uint256 _totalSupply) {
-        contractAddress = payable(address(this));
+        vault = payable(address(this));
         owner = msg.sender;
         name_ = _name;
         symbol_ = _symbol;
@@ -101,7 +101,7 @@ contract MyToken is IERC20 {
         require(balances[msg.sender] >= _value, 'Insufficient Balance!');
         require(timelocks[_receiver].balance == 0, 'Already reserved');
 
-        _transfer(msg.sender, contractAddress, _value);
+        _transfer(msg.sender, vault, _value);
         _reserve(_receiver, _value, _lockperiod);
 
         return true;
@@ -127,7 +127,7 @@ contract MyToken is IERC20 {
     function claim() public returns (bool success) {
         require (timelocks[msg.sender].until <= block.timestamp, 'Lock period is not over yet!');
 
-        _transfer(contractAddress, msg.sender, timelocks[msg.sender].balance);
+        _transfer(vault, msg.sender, timelocks[msg.sender].balance);
         _claim();
 
         return true;

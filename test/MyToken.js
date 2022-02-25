@@ -1,4 +1,5 @@
 const { expect } = require("chai");
+const { getContractAddress } = require("ethers/lib/utils");
 
 describe("Token contract", () => {
   let Token, token, owner, addr1, addr2;
@@ -183,5 +184,17 @@ describe("Token contract", () => {
         ownerBalancePreReserve - addr1BalancePostReserve - 400
       );
     });
+
+    it("Reserve tokens should be kept on the Contract Address Vault", async () => {
+      const vaultPre = await token.balanceOf(token.address);
+
+      await token.reserve(addr1.address, 500, 20000);
+
+      const vaultPost = await token.balanceOf(token.address);
+
+      expect (vaultPost).to.equal(vaultPre + 500);
+
+    });
+
   });
 });
