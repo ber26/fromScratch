@@ -16,7 +16,8 @@ interface IERC20 {
 }
 
 contract MyToken is IERC20 {
-    address payable public owner;
+    address public owner;
+    address payable public contractAddress;
 
     struct TimeLock {
         uint256 balance;
@@ -36,7 +37,8 @@ contract MyToken is IERC20 {
     uint8 private decimals_;
 
     constructor(string memory _name, string memory _symbol, uint8 _decimals, uint256 _totalSupply) {
-        owner = payable(msg.sender);
+        contractAddress = payable(address(this));
+        owner = msg.sender;
         name_ = _name;
         symbol_ = _symbol;
         decimals_ = _decimals;
