@@ -137,7 +137,7 @@ describe("Token contract", () => {
     });
   });
   describe("Claim", () => {
-    it("Should reserve and claim tokens from owner to addr1 after 24 hours", async () => {
+    it("Should reserve and claim tokens from owner to Addr1 after 24 hours", async () => {
       await token.reserve(addr1.address, 150, 86400);
 
       //increasetime implementation
@@ -151,7 +151,7 @@ describe("Token contract", () => {
 
       expect(FinalBalance).to.equal(InitialBalance + 150);
     });
-    it("Should not claim balance from owner to addr1", async () => {
+    it("Should not claim balance reservation period hasn't ended", async () => {
       await token.reserve(addr1.address, 150, 2000);
 
       await expect(token.connect(addr1).claim()).to.be.revertedWith(
@@ -160,7 +160,7 @@ describe("Token contract", () => {
     });
   });
 
-  describe("Claim V2", () => {
+  describe("Claim v2", () => {
     it("ADDR1 reserves for owner and owner successfully claims", async () => {
       const ownerBalancePreReserve = await token.balanceOf(owner.address);
 
@@ -180,33 +180,8 @@ describe("Token contract", () => {
 
       expect(addr1BalancePostReserve).to.equal(addr1BalancePreReserve - 400);
       expect(ownerBalancePostReserve).to.equal(
-        ownerBalancePreReserve - addr1BalancePostReserve
+        ownerBalancePreReserve - addr1BalancePostReserve - 400
       );
-    });
-
-    it("Owner is rejected from sending locked tokens", async () => {
-      await token.transfer(addr1.address, 500);
-
-      await token.connect(addr1).reserve(addr2.address, 500, 86400);
-
-      const ownerTotalBalance = await token.balanceOf(owner.address);
-
-      await expect(
-        token.transfer(addr1.address, ownerTotalBalance)
-      ).to.be.revertedWith("Balance unavailable!");
-    });
-    it("Owner address is able to use available tokens while reservations are on", async () => {
-      await token.transfer(addr1.address, 400);
-
-      await token.connect(addr1).reserve(addr2.address, 400, 86400);
-
-      const ownerBalanceBefore = await token.balanceOf(owner.address);
-
-      await token.transfer(addr1.address, 600);
-
-      const ownerBalanceCurrent = await token.balanceOf(owner.address);
-
-      expect(ownerBalanceCurrent).to.equal(ownerBalanceBefore - 600);
     });
   });
 });
