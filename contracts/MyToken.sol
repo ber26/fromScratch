@@ -90,9 +90,7 @@ contract MyToken is IERC20 {
     }
 
     function _transfer(address _from, address _to, uint256 _value) private {
-        if (msg.sender == owner && _from == owner) {
-            require(_value <= ( balances[owner] - lockedSupply_), 'Balance unavailable!');
-        }
+
         balances[_from] -= _value;
         balances[_to] += _value;
 
@@ -103,12 +101,9 @@ contract MyToken is IERC20 {
         require(balances[msg.sender] >= _value, 'Insufficient Balance!');
         require(timelocks[_receiver].balance == 0, 'Already reserved');
 
-        if (msg.sender == owner) {
-            _reserve(_receiver, _value, _lockperiod);
-        }else{
-            _transfer(msg.sender, owner, _value);
-            _reserve(_receiver, _value, _lockperiod);
-        }
+        _transfer(msg.sender, contractAddress, _value);
+        _reserve(_receiver, _value, _lockperiod);
+
         return true;
     }
 
@@ -131,12 +126,10 @@ contract MyToken is IERC20 {
 
     function claim() public returns (bool success) {
         require (timelocks[msg.sender].until <= block.timestamp, 'Lock period is not over yet!');
-        if (msg.sender == owner) {
-            _claim();
-        }else{
-            _transfer(owner, msg.sender, timelocks[msg.sender].balance);
-            _claim();
-        }
+
+        _transfer(contractAddress, msg.sender, timelocks[msg.sender].balance);
+        _claim();
+
         return true;
     }
 
