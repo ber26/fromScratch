@@ -181,7 +181,7 @@ describe("Token contract", () => {
 
       //increasetime implementation
       await network.provider.send("evm_increaseTime", [90000]);
-      await token.claim();
+      await token.connect(owner).claim();
 
       expect(addr1BalancePostReserve).to.equal(addr1BalancePreReserve - 400);
       expect(ownerBalancePostReserve).to.equal(
@@ -197,6 +197,31 @@ describe("Token contract", () => {
       const vaultPost = await token.balanceOf(token.address);
 
       expect (vaultPost).to.equal(vaultPre + 500);
+
+    });
+    it ("Should allow multiple concurrent Reservations on the Contract", async () => {
+      await token.transfer(addr1.address, 100);
+      await token.transfer(addr2.address, 200);
+
+      const addr1Pre = await token.balanceOf(addr1.address);
+      const addr2Pre = await token.balanceOf(addr2.address);
+
+      await token.connect(addr1).reserve(addr2.address, 100, 2000);
+      await token.connect(addr2).reserve(addr1.address, 200, 2000);
+
+      await network.provider.send("evm_increaseTime", [2200]);
+
+      const vaultPre = await token.balanceOf(token.address);
+
+
+      await token.connect(addr1).claim();
+
+      const vaultPost = await token.balanceOf(token.address);
+      const addr1Final = await token.balanceOf(addr1.address);
+
+      expect (vaultPost).to.equal(vaultPre-addr2Pre);
+      expect (vaultPost).to.equal(addr1Pre);
+      expect (addr1Final).to.equal(addr2Pre);
 
     });
   });
