@@ -181,7 +181,6 @@ describe("Token contract", () => {
 
       //increasetime implementation
       await network.provider.send("evm_increaseTime", [90000]);
-
       await token.claim();
 
       expect(addr1BalancePostReserve).to.equal(addr1BalancePreReserve - 400);
@@ -200,6 +199,5 @@ describe("Token contract", () => {
       expect (vaultPost).to.equal(vaultPre + 500);
 
     });
-
   });
 });
